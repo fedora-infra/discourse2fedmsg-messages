@@ -14,4 +14,38 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-from .thing import NewThingV1  # noqa: F401
+from fedora_messaging import message
+
+
+class DiscourseMessageV1(message.Message):
+    body_schema = {
+        "id": "http://fedoraproject.org/message-schema/discourse2fedmsg",
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "description": "Messages from discourse instances via webhook",
+        "type": "object",
+        "required": ["webhook_body", "webhook_headers"],
+        "properties": {
+            "webhook_body": {
+                "description": "The body of the webhook POST request from Discourse",
+                "type": "object",
+            },
+            "webhook_headers": {
+                "description": "The headers of the webhook POST request from Discourse",
+                "type": "object",
+                "required": [
+                    "X-Discourse-Instance",
+                    "X-Discourse-Event-Id",
+                    "X-Discourse-Event",
+                    "X-Discourse-Event-Type",
+                    "X-Discourse-Event-Signature",
+                ],
+                "properties": {
+                    "X-Discourse-Instance": {"type": "string"},
+                    "X-Discourse-Event-Id": {"type": "integer"},
+                    "X-Discourse-Event": {"type": "string"},
+                    "X-Discourse-Event-Type": {"type": "string"},
+                    "X-Discourse-Event-Signature": {"type": "string"},
+                },
+            },
+        },
+    }
