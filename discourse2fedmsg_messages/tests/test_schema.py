@@ -39,7 +39,7 @@ class TestSchema:
 
         webhook_headers = {
             "X-Discourse-Instance": "http://discourse2fedmsg.test:3000",
-            "X-Discourse-Event-Id": 171,
+            "X-Discourse-Event-Id": "171",
             "X-Discourse-Event-Type": "post",
             "X-Discourse-Event": "post_created",
             "X-Discourse-Event-Signature": "sha256=01a27d2aa1a034cc11505bc2f2a7e8688bc2f3b",

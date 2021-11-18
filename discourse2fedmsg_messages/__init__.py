@@ -41,7 +41,7 @@ class DiscourseMessageV1(message.Message):
                 ],
                 "properties": {
                     "X-Discourse-Instance": {"type": "string"},
-                    "X-Discourse-Event-Id": {"type": "integer"},
+                    "X-Discourse-Event-Id": {"type": "string"},
                     "X-Discourse-Event": {"type": "string"},
                     "X-Discourse-Event-Type": {"type": "string"},
                     "X-Discourse-Event-Signature": {"type": "string"},
