@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "discourse2fedmsg-messages"
+version = "1.0.0"
+description = "A schema package for messages sent by discourse2fedmsg"
+
+license = "GPLv2+"
+
+authors = [
+  "Fedora Infrastructure Team <infrastructure@lists.fedoraproject.org>"
+]
+
+readme = 'README.md'  # Markdown files are supported
+
+repository = "https://github.com/fedora-infra/discourse2fedmsg-messages"
+homepage = "https://github.com/fedora-infra/discourse2fedmsg-messages"
+
+keywords = ['fedora']
+
+include = [
+    "tox.ini",
+]
+
+[tool.poetry.plugins."fedora.messages"]
+"discourse.event.v1"="discourse2fedmsg_messages:DiscourseMessageV1"
+
+
+[tool.poetry.dependencies]
+python = "^3.6"
+fedora-messaging = "^2.0.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.3"
+pytest-cov = "^2.8"
+sphinx = "^3.0"
+mock = "^4.0"
+bandit = "^1.6"
+black = {version = "^19.10b0", allow-prereleases = true}
+flake8 = "^3.7"
+
+
+[build-system]
+requires = ["poetry>=1.0.0"]
+build-backend = "poetry.masonry.api"
