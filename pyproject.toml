@@ -1,9 +1,9 @@
 [tool.poetry]
 name = "discourse2fedmsg-messages"
-version = "1.0.0"
+version = "1.0.1"
 description = "A schema package for messages sent by discourse2fedmsg"
 
-license = "GPLv2+"
+license = "GPLv3+"
 
 authors = [
   "Fedora Infrastructure Team <infrastructure@lists.fedoraproject.org>"
