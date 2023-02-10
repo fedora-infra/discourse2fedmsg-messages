@@ -18,6 +18,10 @@ from fedora_messaging import message
 
 
 class DiscourseMessageV1(message.Message):
+    @property
+    def app_name(self):
+        return "Discourse"
+
     body_schema = {
         "id": "http://fedoraproject.org/message-schema/discourse2fedmsg",
         "$schema": "http://json-schema.org/draft-04/schema#",

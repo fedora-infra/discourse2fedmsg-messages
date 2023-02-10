@@ -47,16 +47,8 @@ class TestSchema:
 
         msg = DiscourseMessageV1(
             body={"webhook_body": webhook_body, "webhook_headers": webhook_headers},
-            topic="discourse.post.post_created",
+            topic="discourse.fake.fake_action",
         )
         msg.validate()
 
-        # msg_dump = json.loads(message.dumps(msg))
-        # assert msg_dump["body"]["msg"]["agent"] == "dudemcpants"
-        # assert msg_dump["body"]["msg"]["user"] == "testuser"
-        # assert msg_dump["body"]["msg"]["group"] == "developers"
-        # assert (
-        #     msg_dump["headers"]["fedora_messaging_schema"]
-        #     == "noggin.group.member.sponsor.v1"
-        # )
-        # assert msg_dump["topic"] == "fas.group.member.sponsor"
+        assert msg.app_name == "Discourse"
