@@ -69,6 +69,21 @@ class DiscourseMessageV1(message.Message):
                 )
             else:
                 return None
+        if self.event_type == "like":
+            like = self.webhook_body.get("like", {})
+
+            username = like.get("post", {}).get("username")
+            topic_title = like.get("post", {}).get("topic_title")
+
+            liker = like.get("user", {}).get("username")
+
+            if self.event == "post_liked":
+                return (
+                    f"Post Liked on {self.instance_name}:"
+                    f" {liker} liked {username}'s post on '{topic_title}'"
+                )
+            else:
+                return None
         else:
             return None
 
@@ -80,6 +95,10 @@ class DiscourseMessageV1(message.Message):
         if self.event_type == "post":
             post = self.webhook_body.get("post", {})
             return post.get("username")
+        if self.event_type == "like":
+            like = self.webhook_body.get("like", {})
+            liker = like.get("user", {}).get("username")
+            return liker
         else:
             return None
 

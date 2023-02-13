@@ -45,11 +45,20 @@ class TestSchema:
         assert msg.instance_name is None
         assert msg.agent_name is None
 
-        # test the case that the event type matches, but event doenst
+        # test the case that the event type matches post, but event doenst
         webhook_headers["X-Discourse-Event-Type"] = "post"
         msg = DiscourseMessageV1(
             body={"webhook_body": webhook_body, "webhook_headers": webhook_headers},
             topic="discourse.post.fake_action",
+        )
+        msg.validate()
+        assert msg.summary is None
+
+        # test the case that the event type matches like, but event doenst
+        webhook_headers["X-Discourse-Event-Type"] = "like"
+        msg = DiscourseMessageV1(
+            body={"webhook_body": webhook_body, "webhook_headers": webhook_headers},
+            topic="discourse.like.fake_action",
         )
         msg.validate()
         assert msg.summary is None
