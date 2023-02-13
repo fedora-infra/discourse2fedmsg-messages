@@ -57,6 +57,11 @@ class DiscourseMessageV1(message.Message):
                 return f"New Post on {self.instance_name}: {username} posted in '{topic_title}'"
             elif self.event == "post_edited":
                 return f"Post Edited on {self.instance_name}: {username}'s post on '{topic_title}'"
+            elif self.event == "post_recovered":
+                return (
+                    f"Post Recovered on {self.instance_name}:"
+                    f" {username}'s post on '{topic_title}'"
+                )
             else:
                 return None
         else:

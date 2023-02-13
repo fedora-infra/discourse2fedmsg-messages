@@ -98,7 +98,7 @@ class TestPostCreated:
         assert msg.agent_name == "darknao"
 
     def test_post_edited(self):
-        topic = "org.fedoraproject.prod.discourse.post.post_created"
+        topic = "org.fedoraproject.prod.discourse.post.post_edited"
         body = {
             "webhook_body": {
                 "post": {
@@ -181,3 +181,94 @@ class TestPostCreated:
         )
         assert msg.__str__() == msg.summary
         assert msg.agent_name == "johnnee8"
+
+    def test_post_recovered(self):
+        topic = "org.fedoraproject.prod.discourse.post.post_recovered"
+        body = {
+            "webhook_body": {
+                "post": {
+                    "admin": False,
+                    "akismet_state": None,
+                    "avatar_template": (
+                        "/user_avatar/discussion.fedoraproject.org/hankuoffroad/{size}/2935_2.png"
+                    ),
+                    "bookmarked": False,
+                    "category_id": 7,
+                    "category_slug": "project",
+                    "created_at": "2023-01-27T15:41:26.572Z",
+                    "current_user_reaction": None,
+                    "current_user_used_main_reaction": False,
+                    "deleted_at": None,
+                    "display_username": "Hank Lee",
+                    "edit_reason": None,
+                    "flair_name": None,
+                    "hidden": False,
+                    "id": 78730,
+                    "incoming_link_count": 0,
+                    "moderator": False,
+                    "name": "Hank Lee",
+                    "post_number": 3,
+                    "post_type": 1,
+                    "primary_group_name": None,
+                    "quote_count": 0,
+                    "reaction_users_count": 0,
+                    "reactions": [],
+                    "reads": 9,
+                    "reply_count": 0,
+                    "reply_to_post_number": 2,
+                    "reply_to_user": {
+                        "avatar_template": (
+                            "/user_avatar/discussion.fedoraproject.org/pboy/{size}/5607_2.png"
+                        ),
+                        "name": "Peter Boy",
+                        "username": "pboy",
+                    },
+                    "reviewable_id": None,
+                    "reviewable_score_count": 0,
+                    "reviewable_score_pending_count": 0,
+                    "score": 1.8,
+                    "staff": False,
+                    "topic_archetype": "regular",
+                    "topic_filtered_posts_count": 3,
+                    "topic_id": 46225,
+                    "topic_posts_count": 3,
+                    "topic_slug": "quickdocs-manage-images",
+                    "topic_title": "QuickDocs - Manage images",
+                    "trust_level": 2,
+                    "updated_at": "2023-02-11T00:37:39.146Z",
+                    "user_cakedate": "2021-08-04",
+                    "user_deleted": False,
+                    "user_id": 2597,
+                    "user_status": {
+                        "description": "Slow in reply",
+                        "emoji": "deciduous_tree",
+                        "ends_at": "2023-04-05T15:00:00.000Z",
+                        "message_bus_last_id": 250,
+                    },
+                    "user_title": "",
+                    "username": "hankuoffroad",
+                    "version": 3,
+                    "wiki": False,
+                }
+            },
+            "webhook_headers": {
+                "X-Discourse-Event": "post_recovered",
+                "X-Discourse-Event-Id": "158951",
+                "X-Discourse-Event-Signature": (
+                    "sha256=fecc90c9cf48b78118d8601659a4a4a1f7622d4c3b0e2c92deed660918d70074"
+                ),
+                "X-Discourse-Event-Type": "post",
+                "X-Discourse-Instance": "https://discussion.fedoraproject.org",
+            },
+        }
+
+        msg = DiscourseMessageV1(body=body, topic=topic)
+        msg.validate()
+
+        assert msg.app_name == "Discourse"
+        assert msg.summary == (
+            "Post Recovered on Fedora Discussion: hankuoffroad's post on "
+            "'QuickDocs - Manage images'"
+        )
+        assert msg.__str__() == msg.summary
+        assert msg.agent_name == "hankuoffroad"
