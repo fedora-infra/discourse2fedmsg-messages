@@ -62,6 +62,11 @@ class DiscourseMessageV1(message.Message):
                     f"Post Recovered on {self.instance_name}:"
                     f" {username}'s post on '{topic_title}'"
                 )
+            elif self.event == "post_destroyed":
+                return (
+                    f"Post Destroyed on {self.instance_name}:"
+                    f" {username}'s post on '{topic_title}'"
+                )
             else:
                 return None
         else:

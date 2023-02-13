@@ -272,3 +272,82 @@ class TestPostCreated:
         )
         assert msg.__str__() == msg.summary
         assert msg.agent_name == "hankuoffroad"
+
+    def test_post_destroyed(self):
+        topic = "org.fedoraproject.prod.discourse.post.post_destroyed"
+        body = {
+            "webhook_body": {
+                "post": {
+                    "admin": False,
+                    "akismet_state": "confirmed_ham",
+                    "avatar_template": (
+                        "https://avatars.discourse-cdn.com/v4/letter/p/f0a364/{size}.png"
+                    ),
+                    "bookmarked": False,
+                    "calendar_details": [],
+                    "category_id": 97,
+                    "category_slug": "english",
+                    "created_at": "2023-01-29T01:22:59.114Z",
+                    "current_user_reaction": None,
+                    "current_user_used_main_reaction": False,
+                    "deleted_at": None,
+                    "display_username": "",
+                    "edit_reason": None,
+                    "flair_name": None,
+                    "hidden": False,
+                    "id": 126080,
+                    "incoming_link_count": 9,
+                    "moderator": False,
+                    "name": "",
+                    "post_number": 1,
+                    "post_type": 1,
+                    "primary_group_name": None,
+                    "quote_count": 0,
+                    "reaction_users_count": 0,
+                    "reactions": [],
+                    "reads": 24,
+                    "reply_count": 0,
+                    "reply_to_post_number": None,
+                    "reviewable_id": None,
+                    "reviewable_score_count": 0,
+                    "reviewable_score_pending_count": 0,
+                    "score": 49.8,
+                    "staff": False,
+                    "topic_archetype": "regular",
+                    "topic_filtered_posts_count": 11,
+                    "topic_id": 31274,
+                    "topic_posts_count": 11,
+                    "topic_slug": "name-resolution-failure",
+                    "topic_title": "Name Resolution Failure",
+                    "trust_level": 0,
+                    "updated_at": "2023-01-29T01:22:59.114Z",
+                    "user_cakedate": "2023-01-29",
+                    "user_deleted": False,
+                    "user_id": 11781,
+                    "user_title": None,
+                    "username": "pnietzsche",
+                    "version": 1,
+                    "wiki": False,
+                }
+            },
+            "webhook_headers": {
+                "X-Discourse-Event": "post_destroyed",
+                "X-Discourse-Event-Id": "83530",
+                "X-Discourse-Event-Signature": (
+                    "sha256=eb117d83b4f4768f7aa79e762ee543383e25e2f6b54d309af1a19d1ecc099a2e"
+                ),
+                "X-Discourse-Event-Type": "post",
+                "X-Discourse-Instance": "https://ask.fedoraproject.org",
+            },
+        }
+
+        msg = DiscourseMessageV1(body=body, topic=topic)
+        msg.validate()
+
+        assert msg.app_name == "Discourse"
+        assert msg.summary == (
+            "Post Destroyed on Ask Fedora: pnietzsche's post on "
+            "'Name Resolution Failure'"
+        )
+        assert msg.__str__() == msg.summary
+        assert msg.agent_name == "pnietzsche"
