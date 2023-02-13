@@ -54,7 +54,9 @@ class DiscourseMessageV1(message.Message):
             username = post.get("username")
             topic_title = post.get("topic_title")
             if self.event == "post_created":
-                return f"{username} posted in {self.instance_name} topic: {topic_title}"
+                return f"New Post on {self.instance_name}: {username} posted in '{topic_title}'"
+            elif self.event == "post_edited":
+                return f"Post Edited on {self.instance_name}: {username}'s post on '{topic_title}'"
             else:
                 return None
         else:
