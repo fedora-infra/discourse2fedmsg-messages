@@ -24,24 +24,12 @@ class TestSchema:
         """
         Test DiscourseMessageV1
         """
-        webhook_body = {
-            "post": {
-                "id": 25,
-                "username": "testadmin",
-                "created_at": "2021-11-17T10:00:58.963Z",
-                "post_number": 1,
-                "post_type": 1,
-                "updated_at": "2021-11-17T10:00:58.963Z",
-                "reply_count": 0,
-                "quote_count": 0,
-            }
-        }
-
+        webhook_body = {}
         webhook_headers = {
             "X-Discourse-Instance": "http://discourse2fedmsg.test:3000",
             "X-Discourse-Event-Id": "171",
-            "X-Discourse-Event-Type": "post",
-            "X-Discourse-Event": "post_created",
+            "X-Discourse-Event-Type": "fake",
+            "X-Discourse-Event": "fake_action",
             "X-Discourse-Event-Signature": "sha256=01a27d2aa1a034cc11505bc2f2a7e8688bc2f3b",
         }
 
@@ -52,3 +40,16 @@ class TestSchema:
         msg.validate()
 
         assert msg.app_name == "Discourse"
+        assert msg.summary is None
+        assert msg.__str__() is None
+        assert msg.instance_name is None
+        assert msg.agent_name is None
+
+        # test the case that the event type matches, but event doenst
+        webhook_headers["X-Discourse-Event-Type"] = "post"
+        msg = DiscourseMessageV1(
+            body={"webhook_body": webhook_body, "webhook_headers": webhook_headers},
+            topic="discourse.post.fake_action",
+        )
+        msg.validate()
+        assert msg.summary is None

@@ -22,6 +22,55 @@ class DiscourseMessageV1(message.Message):
     def app_name(self):
         return "Discourse"
 
+    @property
+    def webhook_body(self):
+        return self.body.get("webhook_body", {})
+
+    @property
+    def instance(self):
+        return self.body["webhook_headers"]["X-Discourse-Instance"]
+
+    @property
+    def event(self):
+        return self.body["webhook_headers"]["X-Discourse-Event"]
+
+    @property
+    def event_type(self):
+        return self.body["webhook_headers"]["X-Discourse-Event-Type"]
+
+    @property
+    def instance_name(self):
+        if self.instance == "https://discussion.fedoraproject.org":
+            return "Fedora Discussion"
+        elif self.instance == "https://ask.fedoraproject.org":
+            return "Ask Fedora"
+        else:
+            return None
+
+    @property
+    def summary(self):
+        if self.event_type == "post":
+            post = self.webhook_body.get("post", {})
+            username = post.get("username")
+            topic_title = post.get("topic_title")
+            if self.event == "post_created":
+                return f"{username} posted in {self.instance_name} topic: {topic_title}"
+            else:
+                return None
+        else:
+            return None
+
+    def __str__(self):
+        return self.summary
+
+    @property
+    def agent_name(self):
+        if self.event_type == "post":
+            post = self.webhook_body.get("post", {})
+            return post.get("username")
+        else:
+            return None
+
     body_schema = {
         "id": "http://fedoraproject.org/message-schema/discourse2fedmsg",
         "$schema": "http://json-schema.org/draft-04/schema#",
