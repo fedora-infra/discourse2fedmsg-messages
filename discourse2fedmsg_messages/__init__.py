@@ -69,7 +69,7 @@ class DiscourseMessageV1(message.Message):
                 )
             else:
                 return None
-        if self.event_type == "like":
+        elif self.event_type == "like":
             like = self.webhook_body.get("like", {})
 
             username = like.get("post", {}).get("username")
@@ -84,6 +84,32 @@ class DiscourseMessageV1(message.Message):
                 )
             else:
                 return None
+        elif self.event_type == "topic":
+            topic = self.webhook_body.get("topic", {})
+            username = topic.get("created_by", {}).get("username")
+            topic_title = topic.get("title")
+            if self.event == "topic_created":
+                return (
+                    f"New Topic on {self.instance_name}:"
+                    f" {username} created the topic '{topic_title}'"
+                )
+            elif self.event == "topic_edited":
+                return (
+                    f"Topic Edited on {self.instance_name}:"
+                    f" {username}'s topic '{topic_title}'"
+                )
+            elif self.event == "topic_destroyed":
+                return (
+                    f"Topic Destroyed on {self.instance_name}:"
+                    f" {username}'s topic '{topic_title}'"
+                )
+            elif self.event == "topic_recovered":
+                return (
+                    f"Topic Recovered on {self.instance_name}:"
+                    f" {username}'s topic '{topic_title}'"
+                )
+            else:
+                return None
         else:
             return None
 
@@ -93,12 +119,35 @@ class DiscourseMessageV1(message.Message):
     @property
     def agent_name(self):
         if self.event_type == "post":
-            post = self.webhook_body.get("post", {})
-            return post.get("username")
-        if self.event_type == "like":
-            like = self.webhook_body.get("like", {})
-            liker = like.get("user", {}).get("username")
-            return liker
+            if (
+                self.event == "post_created"
+                or self.event == "post_destroyed"
+                or self.event == "post_recovered"
+                or self.event == "post_edited"
+            ):
+                post = self.webhook_body.get("post", {})
+                return post.get("username")
+            else:
+                return None
+        elif self.event_type == "like":
+            if self.event == "post_liked":
+                like = self.webhook_body.get("like", {})
+                liker = like.get("user", {}).get("username")
+                return liker
+            else:
+                return None
+        elif self.event_type == "topic":
+            topic = self.webhook_body.get("topic", {})
+            username = topic.get("created_by", {}).get("username")
+            if (
+                self.event == "topic_created"
+                or self.event == "topic_edited"
+                or self.event == "topic_destroyed"
+                or self.event == "topic_recovered"
+            ):
+                return username
+            else:
+                return None
         else:
             return None
 

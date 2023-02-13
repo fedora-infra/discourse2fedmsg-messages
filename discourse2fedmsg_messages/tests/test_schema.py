@@ -15,6 +15,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 from discourse2fedmsg_messages import DiscourseMessageV1
+import pytest
 
 
 class TestSchema:
@@ -45,20 +46,21 @@ class TestSchema:
         assert msg.instance_name is None
         assert msg.agent_name is None
 
+    @pytest.mark.parametrize("event_type", ["post", "like", "topic"])
+    def test_event_type_matches_event_not(self, event_type):
         # test the case that the event type matches post, but event doenst
-        webhook_headers["X-Discourse-Event-Type"] = "post"
+        webhook_body = {}
+        webhook_headers = {
+            "X-Discourse-Instance": "http://discourse2fedmsg.test:3000",
+            "X-Discourse-Event-Id": "171",
+            "X-Discourse-Event-Type": event_type,
+            "X-Discourse-Event": "fake_action",
+            "X-Discourse-Event-Signature": "sha256=01a27d2aa1a034cc11505bc2f2a7e8688bc2f3b",
+        }
         msg = DiscourseMessageV1(
             body={"webhook_body": webhook_body, "webhook_headers": webhook_headers},
-            topic="discourse.post.fake_action",
+            topic=f"discourse.{event_type}.fake_action",
         )
         msg.validate()
         assert msg.summary is None
-
-        # test the case that the event type matches like, but event doenst
-        webhook_headers["X-Discourse-Event-Type"] = "like"
-        msg = DiscourseMessageV1(
-            body={"webhook_body": webhook_body, "webhook_headers": webhook_headers},
-            topic="discourse.like.fake_action",
-        )
-        msg.validate()
-        assert msg.summary is None
+        assert msg.agent_name is None
