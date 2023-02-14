@@ -67,8 +67,6 @@ class DiscourseMessageV1(message.Message):
                     f"Post Destroyed on {self.instance_name}:"
                     f" {username}'s post on '{topic_title}'"
                 )
-            else:
-                return None
         elif self.event_type == "like":
             like = self.webhook_body.get("like", {})
 
@@ -82,8 +80,6 @@ class DiscourseMessageV1(message.Message):
                     f"Post Liked on {self.instance_name}:"
                     f" {liker} liked {username}'s post on '{topic_title}'"
                 )
-            else:
-                return None
         elif self.event_type == "topic":
             topic = self.webhook_body.get("topic", {})
             username = topic.get("created_by", {}).get("username")
@@ -108,8 +104,6 @@ class DiscourseMessageV1(message.Message):
                     f"Topic Recovered on {self.instance_name}:"
                     f" {username}'s topic '{topic_title}'"
                 )
-            else:
-                return None
         elif self.event_type == "solved":
             solved = self.webhook_body.get("solved", {})
             username = solved.get("username")
@@ -119,10 +113,9 @@ class DiscourseMessageV1(message.Message):
                     f"Accepted Solution on {self.instance_name}:"
                     f" {username}'s post on topic '{topic_title}' marked as the solution."
                 )
-            else:
-                return None
-        else:
-            return None
+
+        # return a generic summary if not matching above
+        return f"{self.instance_name}: {self.event_type}.{self.event}"
 
     def __str__(self):
         return self.summary

@@ -27,7 +27,7 @@ class TestSchema:
         """
         webhook_body = {}
         webhook_headers = {
-            "X-Discourse-Instance": "http://discourse2fedmsg.test:3000",
+            "X-Discourse-Instance": "https://discussion.fedoraproject.org",
             "X-Discourse-Event-Id": "171",
             "X-Discourse-Event-Type": "fake",
             "X-Discourse-Event": "fake_action",
@@ -41,9 +41,8 @@ class TestSchema:
         msg.validate()
 
         assert msg.app_name == "Discourse"
-        assert msg.summary is None
-        assert msg.__str__() is None
-        assert msg.instance_name is None
+        assert msg.summary == "Fedora Discussion: fake.fake_action"
+        assert msg.__str__() == msg.summary
         assert msg.agent_name is None
 
     @pytest.mark.parametrize("event_type", ["post", "like", "topic", "solved"])
@@ -51,7 +50,7 @@ class TestSchema:
         # test the case that the event type matches post, but event doenst
         webhook_body = {}
         webhook_headers = {
-            "X-Discourse-Instance": "http://discourse2fedmsg.test:3000",
+            "X-Discourse-Instance": "https://ask.fedoraproject.org",
             "X-Discourse-Event-Id": "171",
             "X-Discourse-Event-Type": event_type,
             "X-Discourse-Event": "fake_action",
@@ -62,5 +61,5 @@ class TestSchema:
             topic=f"discourse.{event_type}.fake_action",
         )
         msg.validate()
-        assert msg.summary is None
+        assert msg.summary == f"Ask Fedora: {event_type}.fake_action"
         assert msg.agent_name is None
