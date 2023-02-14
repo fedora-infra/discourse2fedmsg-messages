@@ -110,6 +110,17 @@ class DiscourseMessageV1(message.Message):
                 )
             else:
                 return None
+        elif self.event_type == "solved":
+            solved = self.webhook_body.get("solved", {})
+            username = solved.get("username")
+            topic_title = solved.get("topic_title")
+            if self.event == "accepted_solution":
+                return (
+                    f"Accepted Solution on {self.instance_name}:"
+                    f" {username}'s post on topic '{topic_title}' marked as the solution."
+                )
+            else:
+                return None
         else:
             return None
 
@@ -148,6 +159,10 @@ class DiscourseMessageV1(message.Message):
                 return username
             else:
                 return None
+        elif self.event_type == "solved":
+            solved = self.webhook_body.get("solved", {})
+            username = solved.get("username")
+            return username
         else:
             return None
 

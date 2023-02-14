@@ -46,7 +46,7 @@ class TestSchema:
         assert msg.instance_name is None
         assert msg.agent_name is None
 
-    @pytest.mark.parametrize("event_type", ["post", "like", "topic"])
+    @pytest.mark.parametrize("event_type", ["post", "like", "topic", "solved"])
     def test_event_type_matches_event_not(self, event_type):
         # test the case that the event type matches post, but event doenst
         webhook_body = {}
