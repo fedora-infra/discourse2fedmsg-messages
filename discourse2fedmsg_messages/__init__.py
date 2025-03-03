@@ -144,11 +144,23 @@ class DiscourseMessageV1(message.Message):
             else:
                 return None
         elif self.event_type == "solved":
-            solved = self.webhook_body.get("solved", {})
-            username = solved.get("username")
-            return username
+            # Marking a question as solved is done by the question's author,
+            # not the answer's author, and we don't have the former in the
+            # webhook's contents.
+            return None
         else:
             return None
+
+    @property
+    def usernames(self):
+        value = set(super().usernames)
+        if self.event_type == "solved":
+            # Add the author of the solution
+            value.add(self.webhook_contents.get("username"))
+        elif self.event_type == "like":
+            # Add the author of the post that was liked
+            value.add(self.webhook_contents.get("post", {}).get("username"))
+        return list(sorted(value))
 
     body_schema = {
         "id": "http://fedoraproject.org/message-schema/discourse2fedmsg",

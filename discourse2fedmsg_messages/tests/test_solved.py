@@ -118,4 +118,5 @@ class TestSolved:
             "the solution."
         )
         assert msg.__str__() == msg.summary
-        assert msg.agent_name == "isudoajl"
+        assert msg.agent_name is None
+        assert msg.usernames == ["isudoajl"]
