@@ -96,6 +96,7 @@ class TestPostCreated:
         )
         assert msg.__str__() == msg.summary
         assert msg.agent_name == "darknao"
+        assert msg.category == "project"
 
     def test_post_edited(self):
         topic = "org.fedoraproject.prod.discourse.post.post_edited"

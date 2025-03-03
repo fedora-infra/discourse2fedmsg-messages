@@ -110,3 +110,4 @@ class TestLike:
         )
         assert msg.__str__() == msg.summary
         assert msg.agent_name == "t0xic0der"
+        assert msg.category == "project"

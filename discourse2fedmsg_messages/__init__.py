@@ -55,6 +55,10 @@ class DiscourseMessageV1(message.Message):
             return None
 
     @property
+    def category(self):
+        return self.post_contents.get("category_slug")
+
+    @property
     def summary(self):
         username = self.post_contents.get("username")
         topic_title = self.post_contents.get("topic_title")

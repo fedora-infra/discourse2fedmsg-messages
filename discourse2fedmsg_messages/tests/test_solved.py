@@ -120,3 +120,4 @@ class TestSolved:
         assert msg.__str__() == msg.summary
         assert msg.agent_name is None
         assert msg.usernames == ["isudoajl"]
+        assert msg.category == "english"

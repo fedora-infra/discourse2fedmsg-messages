@@ -108,6 +108,7 @@ class TestTopic:
         )
         assert msg.__str__() == msg.summary
         assert msg.agent_name == "awarda"
+        assert msg.category is None
 
     def test_topic_edited(self):
         topic = "org.fedoraproject.prod.discourse.topic.topic_edited"
