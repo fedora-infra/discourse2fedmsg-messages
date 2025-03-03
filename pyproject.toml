@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "discourse2fedmsg-messages"
-version = "1.0.3"
+version = "1.1.0"
 description = "A schema package for messages sent by discourse2fedmsg"
 
 license = "GPL-3.0-or-later"
