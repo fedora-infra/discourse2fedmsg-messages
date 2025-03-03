@@ -17,7 +17,8 @@ homepage = "https://github.com/fedora-infra/discourse2fedmsg-messages"
 keywords = ['fedora']
 
 include = [
-    "tox.ini",
+    { path = "tox.ini", format = "sdist" },
+    { path = "tests", format = "sdist" },
 ]
 
 [tool.poetry.plugins."fedora.messages"]
