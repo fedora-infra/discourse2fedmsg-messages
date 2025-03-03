@@ -18,24 +18,26 @@ from discourse2fedmsg_messages import DiscourseMessageV1
 import pytest
 
 
+@pytest.fixture
+def webhook_headers():
+    return {
+        "X-Discourse-Instance": "https://discussion.fedoraproject.org",
+        "X-Discourse-Event-Id": "171",
+        "X-Discourse-Event-Type": "fake",
+        "X-Discourse-Event": "fake_action",
+        "X-Discourse-Event-Signature": "sha256=01a27d2aa1a034cc11505bc2f2a7e8688bc2f3b",
+    }
+
+
 class TestSchema:
     """Unit tests for testing the discourse2fedmsg message schemas."""
 
-    def test_DiscourseMessageV1(self):
+    def test_DiscourseMessageV1(self, webhook_headers):
         """
         Test DiscourseMessageV1
         """
-        webhook_body = {}
-        webhook_headers = {
-            "X-Discourse-Instance": "https://discussion.fedoraproject.org",
-            "X-Discourse-Event-Id": "171",
-            "X-Discourse-Event-Type": "fake",
-            "X-Discourse-Event": "fake_action",
-            "X-Discourse-Event-Signature": "sha256=01a27d2aa1a034cc11505bc2f2a7e8688bc2f3b",
-        }
-
         msg = DiscourseMessageV1(
-            body={"webhook_body": webhook_body, "webhook_headers": webhook_headers},
+            body={"webhook_body": {}, "webhook_headers": webhook_headers},
             topic="discourse.fake.fake_action",
         )
         msg.validate()
@@ -46,20 +48,25 @@ class TestSchema:
         assert msg.agent_name is None
 
     @pytest.mark.parametrize("event_type", ["post", "like", "topic", "solved"])
-    def test_event_type_matches_event_not(self, event_type):
+    def test_event_type_matches_event_not(self, webhook_headers, event_type):
         # test the case that the event type matches post, but event doenst
-        webhook_body = {}
-        webhook_headers = {
-            "X-Discourse-Instance": "https://ask.fedoraproject.org",
-            "X-Discourse-Event-Id": "171",
-            "X-Discourse-Event-Type": event_type,
-            "X-Discourse-Event": "fake_action",
-            "X-Discourse-Event-Signature": "sha256=01a27d2aa1a034cc11505bc2f2a7e8688bc2f3b",
-        }
+        webhook_headers["X-Discourse-Instance"] = "https://ask.fedoraproject.org"
+        webhook_headers["X-Discourse-Event-Type"] = event_type
         msg = DiscourseMessageV1(
-            body={"webhook_body": webhook_body, "webhook_headers": webhook_headers},
+            body={"webhook_body": {}, "webhook_headers": webhook_headers},
             topic=f"discourse.{event_type}.fake_action",
         )
         msg.validate()
         assert msg.summary == f"Ask Fedora: {event_type}.fake_action"
         assert msg.agent_name is None
+
+    def test_unknown_instance(self, webhook_headers):
+        webhook_headers["X-Discourse-Instance"] = "https://unknown.fedoraproject.org"
+        msg = DiscourseMessageV1(
+            body={"webhook_body": {}, "webhook_headers": webhook_headers},
+            topic="discourse.fake.fake_action",
+        )
+        msg.validate()
+
+        assert msg.instance_name is None
+        assert msg.summary == "None: fake.fake_action"

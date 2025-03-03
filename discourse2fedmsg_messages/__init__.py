@@ -23,10 +23,6 @@ class DiscourseMessageV1(message.Message):
         return "Discourse"
 
     @property
-    def webhook_body(self):
-        return self.body.get("webhook_body", {})
-
-    @property
     def instance(self):
         return self.body["webhook_headers"]["X-Discourse-Instance"]
 
@@ -39,6 +35,17 @@ class DiscourseMessageV1(message.Message):
         return self.body["webhook_headers"]["X-Discourse-Event-Type"]
 
     @property
+    def webhook_contents(self):
+        return self.body["webhook_body"].get(self.event_type, {})
+
+    @property
+    def post_contents(self):
+        if self.event_type == "like":
+            return self.webhook_contents.get("post", {})
+        else:
+            return self.webhook_contents
+
+    @property
     def instance_name(self):
         if self.instance == "https://discussion.fedoraproject.org":
             return "Fedora Discussion"
@@ -49,10 +56,9 @@ class DiscourseMessageV1(message.Message):
 
     @property
     def summary(self):
+        username = self.post_contents.get("username")
+        topic_title = self.post_contents.get("topic_title")
         if self.event_type == "post":
-            post = self.webhook_body.get("post", {})
-            username = post.get("username")
-            topic_title = post.get("topic_title")
             if self.event == "post_created":
                 return f"New Post on {self.instance_name}: {username} posted in '{topic_title}'"
             elif self.event == "post_edited":
@@ -68,22 +74,15 @@ class DiscourseMessageV1(message.Message):
                     f" {username}'s post on '{topic_title}'"
                 )
         elif self.event_type == "like":
-            like = self.webhook_body.get("like", {})
-
-            username = like.get("post", {}).get("username")
-            topic_title = like.get("post", {}).get("topic_title")
-
-            liker = like.get("user", {}).get("username")
-
+            liker = self.webhook_contents.get("user", {}).get("username")
             if self.event == "post_liked":
                 return (
                     f"Post Liked on {self.instance_name}:"
                     f" {liker} liked {username}'s post on '{topic_title}'"
                 )
         elif self.event_type == "topic":
-            topic = self.webhook_body.get("topic", {})
-            username = topic.get("created_by", {}).get("username")
-            topic_title = topic.get("title")
+            username = self.webhook_contents.get("created_by", {}).get("username")
+            topic_title = self.webhook_contents.get("title")
             if self.event == "topic_created":
                 return (
                     f"New Topic on {self.instance_name}:"
@@ -105,9 +104,6 @@ class DiscourseMessageV1(message.Message):
                     f" {username}'s topic '{topic_title}'"
                 )
         elif self.event_type == "solved":
-            solved = self.webhook_body.get("solved", {})
-            username = solved.get("username")
-            topic_title = solved.get("topic_title")
             if self.event == "accepted_solution":
                 return (
                     f"Accepted Solution on {self.instance_name}:"
@@ -129,27 +125,22 @@ class DiscourseMessageV1(message.Message):
                 or self.event == "post_recovered"
                 or self.event == "post_edited"
             ):
-                post = self.webhook_body.get("post", {})
-                return post.get("username")
+                return self.webhook_contents.get("username")
             else:
                 return None
         elif self.event_type == "like":
             if self.event == "post_liked":
-                like = self.webhook_body.get("like", {})
-                liker = like.get("user", {}).get("username")
-                return liker
+                return self.webhook_contents.get("user", {}).get("username")
             else:
                 return None
         elif self.event_type == "topic":
-            topic = self.webhook_body.get("topic", {})
-            username = topic.get("created_by", {}).get("username")
             if (
                 self.event == "topic_created"
                 or self.event == "topic_edited"
                 or self.event == "topic_destroyed"
                 or self.event == "topic_recovered"
             ):
-                return username
+                return self.webhook_contents.get("created_by", {}).get("username")
             else:
                 return None
         elif self.event_type == "solved":
